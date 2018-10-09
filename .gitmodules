@@ -1,9 +1,9 @@
 [submodule "ext/sbf"]
 	path = ext/sbf
 	url = https://github.com/blu-corner/sbf.git
-[submodule "ext/libevent"]
-	path = ext/libevent
-	url = https://github.com/libevent/libevent.git
 [submodule "ext/googletest"]
 	path = ext/googletest
 	url = https://github.com/google/googletest.git
+[submodule "ext/libevent"]
+	path = ext/libevent
+	url = https://github.com/libevent/libevent.git

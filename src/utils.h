@@ -44,6 +44,9 @@ int utils_millisSinceMidnight ();
 /* Get the millis and micros since midnight */
 void utils_milliMicroSinceMidnight (int& m, int& mic);
 
+/* Get the number of nanos since midnight */
+uint64_t utils_nanosSinceMidnight ();
+
 /* Check if doubles are equal */
 bool SBF_INLINE utils_doubleEq (double d1, double d2)
 {
@@ -81,9 +84,17 @@ bool utils_parseNumber (const string& s, T& val)
     istringstream iss(s);
     iss >> val;
 
-    if (iss.fail ())
-        return false;
-    return true;
+    return !iss.fail ();
+}
+
+template <typename T>
+bool utils_toString (T& val, string& s)
+{
+    ostringstream oss;
+    oss << val;
+    s.assign (oss.str ());
+
+    return !oss.fail ();
 }
 
 /* parse time string as tm */
