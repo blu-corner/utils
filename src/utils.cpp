@@ -126,6 +126,18 @@ utils_milliMicroSinceMidnight (int& m, int& mic)
     mic = tv.tv_usec;
 }
 
+uint64_t
+utils_nanosSinceMidnight ()
+{
+    struct timespec ts;
+    clock_gettime (CLOCK_REALTIME, &ts);
+
+    uint64_t numberSecondsSinceMidnight = ts.tv_sec % SECONDS_PER_DAY;
+    uint64_t numberOfSecondsSinceMidnightInNanos = numberSecondsSinceMidnight * (uint64_t)1000000000;
+    
+    return numberOfSecondsSinceMidnightInNanos + ts.tv_nsec;
+}
+
 /* parses a time string to a tm */
 bool
 utils_parseTime (const char* stm, tm& t)

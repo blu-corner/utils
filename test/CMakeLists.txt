@@ -2,11 +2,7 @@
 # Copyright 2014-2018 Neueda Ltd.
 #
 include_directories(
-  ${CMAKE_INSTALL_PREFIX}/include/
-  ${CMAKE_INSTALL_PREFIX}/include/sbf
-  ${CMAKE_INSTALL_PREFIX}/include/event2
   ${CMAKE_BINARY_DIR}/googletest/include
-  ${CMAKE_INSTALL_PREFIX}/include/config
   ${PROJECT_SOURCE_DIR}/test
   ${PROJECT_SOURCE_DIR}/src
   )
@@ -14,13 +10,13 @@ link_directories(${CMAKE_INSTALL_PREFIX}/lib)
 link_directories(${CMAKE_BINARY_DIR}/googletest/lib)
 
 add_executable(unittest
-  testRunner.cc
-  testUtils.cc
-  testDl.cc
+  testRunner.cpp
+  testUtils.cpp
+  testDl.cpp
   )
 
 add_library(testinput SHARED
-  testInput.cc
+  testInput.cpp
   )
 
 target_link_libraries(unittest

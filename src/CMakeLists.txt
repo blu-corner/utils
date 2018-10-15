@@ -1,15 +1,6 @@
 #
 # Copyright 2014-2018 Neueda Ltd.
 #
-include_directories(
-  ${CMAKE_INSTALL_PREFIX}/include/
-  ${CMAKE_INSTALL_PREFIX}/include/sbf
-  ${CMAKE_INSTALL_PREFIX}/include/event2
-)
-link_directories(
-    ${CMAKE_INSTALL_PREFIX}/lib
-)
-
 set (INSTALL_HEADERS
   "${CMAKE_CURRENT_SOURCE_DIR}/common.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/compat.h"
@@ -23,7 +14,11 @@ set (SOURCES
   )
 
 add_library (utils SHARED ${SOURCES})
-target_link_libraries (utils sbfcommon dl)
+add_dependencies (utils SBF_PROJECT)
+target_link_libraries (utils sbfcommon ${CMAKE_DL_LIBS})
+if(UNIX AND NOT APPLE)
+    target_link_libraries(utils rt)
+endif()
 
 install (TARGETS utils
   EXPORT ${PROJECT_NAME}
