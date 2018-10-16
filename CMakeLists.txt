@@ -10,6 +10,14 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   set (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "default install path" FORCE )
 endif()
 
+if(WIN32)
+  set(CMAKE_SHARED_LINKER_FLAGS "/FORCE:UNRESOLVED")
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+  set(BUILD_SHARED_LIBS TRUE)
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif()
+
 if(APPLE)
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
   set(CMAKE_XCODE_ATTRIBUTE_GCC_VERSION "com.apple.compilers.llvm.clang.1_0")
@@ -40,7 +48,7 @@ if (UNIX)
 endif (UNIX)
 
 # compile options
-add_compile_options(-Wall -c -W -g)
+add_compile_options(-Wall -c -g)
 if (DEBUG)
   message(STATUS "utils DEBUG: ON")
   set(SUBMODULE_FLAGS ${SUBMODULE_FLAGS} -DDEBUG=on)
