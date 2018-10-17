@@ -1,6 +1,17 @@
 #
 # Copyright 2014-2018 Neueda Ltd.
 #
+set(TESTS_LIBRARIES
+  utils
+  gtest
+  gmock
+  )
+
+if(NOT WIN32)
+	set(TESTS_LIBRARIES ${TESTS_LIBRARIES}
+						pthread)
+endif()
+
 include_directories(
   ${CMAKE_BINARY_DIR}/googletest/include
   ${PROJECT_SOURCE_DIR}/test
@@ -19,12 +30,7 @@ add_library(testinput SHARED
   testInput.cpp
   )
 
-target_link_libraries(unittest
-  utils
-  gtest
-  gmock
-  pthread
-  )
+target_link_libraries(unittest ${TESTS_LIBRARIES})
 
 add_test(NAME unittest
   COMMAND unittest --gtest_output=xml:../test.xml

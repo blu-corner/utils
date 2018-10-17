@@ -3,7 +3,11 @@
 
 #include "dl.h"
 
+#ifndef WIN32
 #define LIB_NAME "libtestinput" SBF_SHLIB_SUFFIX
+#else
+#define LIB_NAME "testinput" SBF_SHLIB_SUFFIX
+#endif
 
 typedef int dl_add_int (int, int);
 typedef int dl_as_string (char *, int);

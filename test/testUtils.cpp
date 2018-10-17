@@ -28,6 +28,7 @@ TEST (UTILS, SECONDS_SINCE_MIDNIGHT)
     ASSERT_EQ (reference, measure);
 }
 
+#ifndef WIN32
 TEST(UTILS, TEST_PARSETIME_CORRECT_INPUT)
 {
     std::string time = "18:31:01";
@@ -82,6 +83,7 @@ TEST(UTILS, PARSEDATETIME_INCORRECT_DAYS)
     ASSERT_EQ(rawtime.tm_mon + 1, 2);
     ASSERT_FALSE(result);
 }
+#endif
 
 TEST(UTILS, PARSEINT_CORRECT_INPUT)
 {

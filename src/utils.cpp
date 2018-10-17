@@ -138,6 +138,7 @@ utils_nanosSinceMidnight ()
     return numberOfSecondsSinceMidnightInNanos + ts.tv_nsec;
 }
 
+#ifndef WIN32
 /* parses a time string to a tm */
 bool
 utils_parseTime (const char* stm, tm& t)
@@ -171,6 +172,7 @@ utils_parseDateTime (const char* stm, tm& t, const char* fmt)
 
     return true;
 }
+#endif
 
 /* parses a string to bool */
 bool

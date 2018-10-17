@@ -9,7 +9,6 @@
 
 #include <string>
 #include <math.h>
-#include <sys/time.h>
 #include <algorithm>
 #include <functional>
 #include <cctype>
