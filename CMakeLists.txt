@@ -97,10 +97,11 @@ if (EVENT_LIB AND EVENT_PTHREAD_LIB)
   message(STATUS "event-found: " ${EVENT_LIB})
   message(STATUS "event-pthread-found: " ${EVENT_PTHREAD_LIB})
 elseif (NOT event_FOUND)
-  set(LIBEVENT_CMAKE ${PROJECT_SOURCE_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
+  set(LIBEVENT_CMAKE ${SUBMODULE_ROOT_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
   message(STATUS "libevent-location: " ${LIBEVENT_CMAKE})
   ExternalProject_Add(
     libevent
+    PREFIX ${SUBMODULE_PREFIX_DIR}
     SOURCE_DIR ${LIBEVENT_CMAKE}
     CMAKE_ARGS -DEVENT__DISABLE_TESTS=ON -DEVENT__DISABLE_REGRESS=ON -DEVENT__DISABLE_OPENSSL=ON -DEVENT__DISABLE_SAMPLES=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     )
