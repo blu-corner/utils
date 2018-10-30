@@ -15,7 +15,7 @@ if(WIN32)
   set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
   set(BUILD_SHARED_LIBS TRUE)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTD")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 endif()
 
 if(APPLE)
@@ -76,9 +76,6 @@ link_directories(
     ${CMAKE_INSTALL_PREFIX}/lib
 )
 
-# add source
-add_subdirectory(src)
-
 # deps
 if(NOT SUBMODULE_ROOT_DIR)
     set(SUBMODULE_ROOT_DIR ${PROJECT_SOURCE_DIR})
@@ -103,11 +100,8 @@ elseif (NOT event_FOUND)
     libevent
     PREFIX ${SUBMODULE_PREFIX_DIR}
     SOURCE_DIR ${LIBEVENT_CMAKE}
-    CMAKE_ARGS -DEVENT__DISABLE_TESTS=ON -DEVENT__DISABLE_REGRESS=ON -DEVENT__DISABLE_OPENSSL=ON -DEVENT__DISABLE_SAMPLES=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+    CMAKE_ARGS -DEVENT__DISABLE_DEBUG=ON -DEVENT__DISABLE_BENCHMARK=ON -DEVENT__DISABLE_TESTS=ON -DEVENT__DISABLE_REGRESS=ON -DEVENT__DISABLE_OPENSSL=ON -DEVENT__DISABLE_SAMPLES=ON -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
     )
-
-  # add include and lib dir
-  link_directories(${CMAKE_INSTALL_PREFIX}/lib)
 endif()
 
 # sbf
@@ -122,6 +116,12 @@ ExternalProject_Add(
 ExternalProject_Get_Property(SBF_PROJECT binary_dir)
 set(SBF_PROJECT_DIR ${binary_dir}/lib/cmake/sbf CACHE PATH "location of sbf cmake files" FORCE)
 set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} "${binary_dir};sbf;ALL;/")
+if(NOT EVENT_LIB)
+    add_dependencies(SBF_PROJECT libevent)
+endif()
+
+# add source
+add_subdirectory(src)
 
 # unit-tests
 option(TESTS "Enable unit-tests" OFF)
