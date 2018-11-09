@@ -31,6 +31,7 @@ add_library(testinput SHARED
   )
 
 target_link_libraries(unittest ${TESTS_LIBRARIES})
+add_dependencies(unittest googletest)
 
 add_test(NAME unittest
   COMMAND unittest --gtest_output=xml:../test.xml
