@@ -12,8 +12,61 @@
 
 #include <sstream>
 #include <iostream>
+#include <iomanip>
+#include <ctime>
+#include <time.h>
+#include <sys/time.h>
 
 #define SECONDS_PER_DAY (86400)
+
+string
+utils_getUtcDateTime ()
+{
+    int milli = 0;
+    struct timeval tv;
+    stringstream utc;
+
+    if (gettimeofday (&tv, NULL) == 0)
+        milli = (int)tv.tv_usec / 1000;
+
+    utc << utils_getUtcDate () << "-" << utils_getUtcTime () << "."
+        << std::setfill ('0') << std::setw (3) << milli;
+
+    return utc.str ();
+}
+
+string
+utils_getUtcDate ()
+{
+    char       date[9] = {0};
+    time_t     t;
+    struct tm* tmp;
+
+    t = time(NULL);
+    tmp = gmtime (&t);
+
+    // 0 Flag not available in strftime for windows
+#ifndef WIN32
+    strftime (date, sizeof(date), "%Y%0m%0d", tmp);
+#else
+    strftime (date, sizeof(date), "%Y%m%d", tmp);
+#endif
+    return string (date);
+}
+
+string
+utils_getUtcTime ()
+{
+    char       tim[15] = {0};
+    time_t     t;
+    struct tm* tmp;
+
+    t = time(NULL);
+    tmp = gmtime (&t);
+
+    strftime (tim, sizeof(tim), "%H:%M:%S", tmp);
+    return string (tim);
+}
 
 /* return the number of seconds since midnight */
 time_t

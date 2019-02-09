@@ -17,6 +17,15 @@
 
 using namespace std;
 
+/* Get the current date and time to YYYYMMDD-HH:MM:SS.MS */
+string utils_getUtcDateTime ();
+
+/* Get the current date YYYYMMDD */
+string utils_getUtcDate ();
+
+/* Get the current date HH:MM:SS.MS */
+string utils_getUtcTime ();
+
 /* return the number of seconds since midnight */
 time_t utils_secondsSinceMidnight ();
 
