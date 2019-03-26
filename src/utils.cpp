@@ -9,11 +9,78 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include <sstream>
 #include <iostream>
+#include <iomanip>
+#include <ctime>
+#include <time.h>
+#include <sys/time.h>
 
 #define SECONDS_PER_DAY (86400)
+
+string
+utils_getUtcDateTime (timePrecision prec)
+{
+    char       datetime[27] = {0};
+    struct     timespec ts;
+    time_t     secs;
+    struct tm* tm;
+    char       ns[11];
+    uint64_t   nanos;
+    
+    clock_gettime (CLOCK_REALTIME, &ts);
+
+    secs = ts.tv_sec;
+    tm = gmtime (&secs);
+    nanos = ts.tv_nsec;
+
+#ifndef WIN32
+    strftime (datetime, sizeof (datetime), "%Y%0m%0d-%H:%M:%S", tm);
+#else
+    strftime (datetime, sizeof (datetime), "%Y%m%d-%H:%M:%S", tm);
+#endif
+
+    snprintf (ns, sizeof (ns), ".%09llu", nanos);
+    strncpy (datetime + strlen (datetime), ns, prec + 1);
+
+    return string (datetime);
+}
+
+string
+utils_getUtcDate ()
+{
+    char       date[9] = {0};
+    time_t     t;
+    struct tm* tm;
+
+    t = time (NULL);
+    tm = gmtime (&t);
+
+    // 0 Flag not available in strftime for windows
+#ifndef WIN32
+    strftime (date, sizeof (date), "%Y%0m%0d", tm);
+#else
+    strftime (date, sizeof (date), "%Y%m%d", tm);
+#endif
+
+    return string (date);
+}
+
+string
+utils_getUtcTime ()
+{
+    char       utc[9] = {0};
+    time_t     t;
+    struct tm* tm;
+
+    t = time (NULL);
+    tm = gmtime (&t);
+
+    strftime (utc, sizeof (utc), "%H:%M:%S", tm);
+    return string (utc);
+}
 
 /* return the number of seconds since midnight */
 time_t
@@ -190,6 +257,52 @@ utils_parseBool (const string& val, bool& out)
     else if (s == "FALSE" || s == "F" || s == "N")
     {
         out = false;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+utils_findFileInEnvPath (const string& variable,
+                         const string& filename,
+                         string& result,
+                         const string& delim)
+{
+    string fp;
+
+    if(const char* e = getenv (variable.c_str ()))
+    {
+        string envVar (e);
+        size_t pos = 0;
+        string token;
+
+        while ((pos = envVar.find (delim)) != string::npos)
+        {
+            token = envVar.substr (0, pos);
+            envVar.erase (0, pos + delim.length ());
+
+            fp = utils_filePathJoin (token, filename);
+            if (utils_checkFileAccessible (fp))
+            {
+                result.assign (fp);
+                return true;
+            }
+        }
+
+        fp = utils_filePathJoin (envVar, filename);
+        if (utils_checkFileAccessible (fp))
+        {
+            result.assign (fp);
+            return true;
+        }
+    }
+
+    string cwd (".");
+    fp = utils_filePathJoin (cwd, filename);
+    if (utils_checkFileAccessible (fp))
+    {
+        result.assign (fp);
         return true;
     }
 

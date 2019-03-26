@@ -14,8 +14,27 @@
 #include <cctype>
 #include <locale>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
+
+enum timePrecision
+{
+    MILLIS = 3,
+    MICROS = 6,
+    NANOS = 9
+};
+
+/* Get the current date and time to YYYYMMDD-HH:MM:SS.sssssssss 
+ * Precision defaults to millis but can be changed by passing in
+ * timePrecision enum */
+string utils_getUtcDateTime (timePrecision p = MILLIS);
+
+/* Get the current date YYYYMMDD */
+string utils_getUtcDate ();
+
+/* Get the current date HH:MM:SS.MS */
+string utils_getUtcTime ();
 
 /* return the number of seconds since midnight */
 time_t utils_secondsSinceMidnight ();
@@ -106,5 +125,30 @@ bool utils_parseDateTime (const char* stm,
 
 /* parse string to bool */
 bool utils_parseBool (const string& s, bool& out);
+
+/* check if file is accessible */
+bool utils_checkFileAccessible (const string& filepath)
+{
+    ifstream f (fp.c_str ());
+    return f.good ();
+}
+
+/* join path and filename */
+string utils_filePathJoin (const string& base, const string& filename)
+{
+    string sep ("/");
+
+    stringstream fp;
+    fp << base << sep << filename;
+
+    return fp.str ();
+}
+
+/* look for file in path(s) defined in environment variable
+ * e.g. CONFIG_PATH=/home/user:/home/user/config */
+bool utils_findFileInEnvPath (const string& variable,
+                              const string& filename,
+                              string& result,
+                              const string& delim = ":");
 
 #endif /* _UTILS_HDR_ */
