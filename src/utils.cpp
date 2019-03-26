@@ -23,29 +23,27 @@
 string
 utils_getUtcDateTime (timePrecision prec)
 {
-    char        datetime[32] = {0};
-    time_t      t;
-    struct tm*  tmp;
+    char       datetime[27] = {0};
+    struct     timespec ts;
+    time_t     secs;
+    struct tm* tm;
+    char       ns[11];
+    uint64_t   nanos;
     
-    t = time(NULL);
-    tmp = gmtime (&t);
+    clock_gettime (CLOCK_REALTIME, &ts);
+
+    secs = ts.tv_sec;
+    tm = gmtime (&secs);
+    nanos = ts.tv_nsec;
 
 #ifndef WIN32
-    strftime (datetime, sizeof(datetime), "%Y%0m%0d-%H:%M:%S", tmp);
+    strftime (datetime, sizeof (datetime), "%Y%0m%0d-%H:%M:%S", tm);
 #else
-    strftime (datetime, sizeof(datetime), "%Y%m%d-%H:%M:%S", tmp);
+    strftime (datetime, sizeof (datetime), "%Y%m%d-%H:%M:%S", tm);
 #endif
 
-    uint64_t nanos = 0;
-    struct timespec ts;
-    if (clock_gettime (CLOCK_REALTIME, &ts) != -1)
-        nanos = ts.tv_nsec;
-
-    char f[11];
-    snprintf (f, sizeof (f), ".%09llu", nanos);
-
-    int w = 9 - prec;
-    strncpy (datetime + 17, f, w + 1);
+    snprintf (ns, sizeof (ns), ".%09llu", nanos);
+    strncpy (datetime + strlen (datetime), ns, prec + 1);
 
     return string (datetime);
 }
@@ -55,32 +53,33 @@ utils_getUtcDate ()
 {
     char       date[9] = {0};
     time_t     t;
-    struct tm* tmp;
+    struct tm* tm;
 
-    t = time(NULL);
-    tmp = gmtime (&t);
+    t = time (NULL);
+    tm = gmtime (&t);
 
     // 0 Flag not available in strftime for windows
 #ifndef WIN32
-    strftime (date, sizeof(date), "%Y%0m%0d", tmp);
+    strftime (date, sizeof (date), "%Y%0m%0d", tm);
 #else
-    strftime (date, sizeof(date), "%Y%m%d", tmp);
+    strftime (date, sizeof (date), "%Y%m%d", tm);
 #endif
+
     return string (date);
 }
 
 string
 utils_getUtcTime ()
 {
-    char       tim[15] = {0};
+    char       utc[9] = {0};
     time_t     t;
-    struct tm* tmp;
+    struct tm* tm;
 
-    t = time(NULL);
-    tmp = gmtime (&t);
+    t = time (NULL);
+    tm = gmtime (&t);
 
-    strftime (tim, sizeof(tim), "%H:%M:%S", tmp);
-    return string (tim);
+    strftime (utc, sizeof (utc), "%H:%M:%S", tm);
+    return string (utc);
 }
 
 /* return the number of seconds since midnight */
@@ -265,43 +264,45 @@ utils_parseBool (const string& val, bool& out)
 }
 
 bool
-utils_findFileInEnvPath (const string& p,
-                         const string& fn,
-                         string& res,
+utils_findFileInEnvPath (const string& variable,
+                         const string& filename,
+                         string& result,
                          const string& delim)
 {
-    string fp ("");
-    if(const char* env_p = getenv(p.c_str ()))
+    string fp;
+
+    if(const char* e = getenv (variable.c_str ()))
     {
-        string envVar (env_p);
+        string envVar (e);
         size_t pos = 0;
         string token;
 
-        while ((pos = envVar.find(delim)) != string::npos) {
-            token = envVar.substr(0, pos);
-            envVar.erase(0, pos + delim.length());
+        while ((pos = envVar.find (delim)) != string::npos)
+        {
+            token = envVar.substr (0, pos);
+            envVar.erase (0, pos + delim.length ());
 
-            fp = utils_filePathJoin (token, fn);
+            fp = utils_filePathJoin (token, filename);
             if (utils_checkFileAccessible (fp))
             {
-                res.assign (fp);
+                result.assign (fp);
                 return true;
             }
         }
 
-        fp = utils_filePathJoin (envVar, fn);
+        fp = utils_filePathJoin (envVar, filename);
         if (utils_checkFileAccessible (fp))
         {
-            res.assign (fp);
+            result.assign (fp);
             return true;
         }
     }
 
     string cwd (".");
-    fp = utils_filePathJoin (cwd, fn);
+    fp = utils_filePathJoin (cwd, filename);
     if (utils_checkFileAccessible (fp))
     {
-        res.assign (fp);
+        result.assign (fp);
         return true;
     }
 

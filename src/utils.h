@@ -20,9 +20,9 @@ using namespace std;
 
 enum timePrecision
 {
-    MILLIS = 6,
-    MICROS = 3,
-    NANOS = 0
+    MILLIS = 3,
+    MICROS = 6,
+    NANOS = 9
 };
 
 /* Get the current date and time to YYYYMMDD-HH:MM:SS.sssssssss 
@@ -127,7 +127,7 @@ bool utils_parseDateTime (const char* stm,
 bool utils_parseBool (const string& s, bool& out);
 
 /* check if file is accessible */
-bool utils_checkFileAccessible (const string& fp)
+bool utils_checkFileAccessible (const string& filepath)
 {
     ifstream f (fp.c_str ());
     return f.good ();
@@ -146,9 +146,9 @@ string utils_filePathJoin (const string& base, const string& filename)
 
 /* look for file in path(s) defined in environment variable
  * e.g. CONFIG_PATH=/home/user:/home/user/config */
-bool utils_findFileInEnvPath (const string& p,
-                              const string& fn,
-                              string& res,
+bool utils_findFileInEnvPath (const string& variable,
+                              const string& filename,
+                              string& result,
                               const string& delim = ":");
 
 #endif /* _UTILS_HDR_ */
