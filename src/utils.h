@@ -18,8 +18,15 @@
 
 using namespace std;
 
+enum timePrecision
+{
+    MILLIS = 6,
+    MICROS = 3,
+    NANOS = 0
+};
+
 /* Get the current date and time to YYYYMMDD-HH:MM:SS.MS */
-string utils_getUtcDateTime ();
+string utils_getUtcDateTime (timePrecision p = MILLIS);
 
 /* Get the current date YYYYMMDD */
 string utils_getUtcDate ();

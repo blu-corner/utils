@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 
 #include <sstream>
 #include <iostream>
@@ -20,19 +21,33 @@
 #define SECONDS_PER_DAY (86400)
 
 string
-utils_getUtcDateTime ()
+utils_getUtcDateTime (timePrecision prec)
 {
-    int milli = 0;
-    struct timeval tv;
-    stringstream utc;
+    char        datetime[32] = {0};
+    time_t      t;
+    struct tm*  tmp;
+    
+    t = time(NULL);
+    tmp = gmtime (&t);
 
-    if (gettimeofday (&tv, NULL) == 0)
-        milli = (int)tv.tv_usec / 1000;
+#ifndef WIN32
+    strftime (datetime, sizeof(datetime), "%Y%0m%0d-%H:%M:%S", tmp);
+#else
+    strftime (datetime, sizeof(datetime), "%Y%m%d-%H:%M:%S", tmp);
+#endif
 
-    utc << utils_getUtcDate () << "-" << utils_getUtcTime () << "."
-        << std::setfill ('0') << std::setw (3) << milli;
+    uint64_t nanos = 0;
+    struct timespec ts;
+    if (clock_gettime (CLOCK_REALTIME, &ts) != -1)
+        nanos = ts.tv_nsec;
 
-    return utc.str ();
+    char f[11];
+    snprintf (f, sizeof (f), ".%09llu", nanos);
+
+    int w = 9 - prec;
+    strncpy (datetime + 17, f, w + 1);
+
+    return string (datetime);
 }
 
 string
