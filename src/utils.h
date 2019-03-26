@@ -25,7 +25,9 @@ enum timePrecision
     NANOS = 0
 };
 
-/* Get the current date and time to YYYYMMDD-HH:MM:SS.MS */
+/* Get the current date and time to YYYYMMDD-HH:MM:SS.sssssssss 
+ * Precision defaults to millis but can be changed by passing in
+ * timePrecision enum */
 string utils_getUtcDateTime (timePrecision p = MILLIS);
 
 /* Get the current date YYYYMMDD */
