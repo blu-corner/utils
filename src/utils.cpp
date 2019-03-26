@@ -248,3 +248,47 @@ utils_parseBool (const string& val, bool& out)
 
     return false;
 }
+
+bool
+utils_findFileInEnvPath (const string& p,
+                         const string& fn,
+                         string& res,
+                         const string& delim)
+{
+    string fp ("");
+    if(const char* env_p = getenv(p.c_str ()))
+    {
+        string envVar (env_p);
+        size_t pos = 0;
+        string token;
+
+        while ((pos = envVar.find(delim)) != string::npos) {
+            token = envVar.substr(0, pos);
+            envVar.erase(0, pos + delim.length());
+
+            fp = utils_filePathJoin (token, fn);
+            if (utils_checkFileAccessible (fp))
+            {
+                res.assign (fp);
+                return true;
+            }
+        }
+
+        fp = utils_filePathJoin (envVar, fn);
+        if (utils_checkFileAccessible (fp))
+        {
+            res.assign (fp);
+            return true;
+        }
+    }
+
+    string cwd (".");
+    fp = utils_filePathJoin (cwd, fn);
+    if (utils_checkFileAccessible (fp))
+    {
+        res.assign (fp);
+        return true;
+    }
+
+    return false;
+}

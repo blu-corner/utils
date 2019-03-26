@@ -14,6 +14,7 @@
 #include <cctype>
 #include <locale>
 #include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -115,5 +116,30 @@ bool utils_parseDateTime (const char* stm,
 
 /* parse string to bool */
 bool utils_parseBool (const string& s, bool& out);
+
+/* check if file is accessible */
+bool utils_checkFileAccessible (const string& fp)
+{
+    ifstream f (fp.c_str ());
+    return f.good ();
+}
+
+/* join path and filename */
+string utils_filePathJoin (const string& base, const string& filename)
+{
+    string sep ("/");
+
+    stringstream fp;
+    fp << base << sep << filename;
+
+    return fp.str ();
+}
+
+/* look for file in path(s) defined in environment variable
+ * e.g. CONFIG_PATH=/home/user:/home/user/config */
+bool utils_findFileInEnvPath (const string& p,
+                              const string& fn,
+                              string& res,
+                              const string& delim = ":");
 
 #endif /* _UTILS_HDR_ */
