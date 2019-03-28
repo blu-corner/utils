@@ -127,14 +127,14 @@ bool utils_parseDateTime (const char* stm,
 bool utils_parseBool (const string& s, bool& out);
 
 /* check if file is accessible */
-bool utils_checkFileAccessible (const string& filepath)
+bool SBF_INLINE utils_checkFileAccessible (const string& filepath)
 {
-    ifstream f (fp.c_str ());
+    ifstream f (filepath.c_str ());
     return f.good ();
 }
 
 /* join path and filename */
-string utils_filePathJoin (const string& base, const string& filename)
+string SBF_INLINE utils_filePathJoin (const string& base, const string& filename)
 {
     string sep ("/");
 
