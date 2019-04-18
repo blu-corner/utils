@@ -141,7 +141,7 @@ utils_localTime (string& s)
     strftime (tim, sizeof(tim), "%H:%M:%S", &tmp);
     s.assign (tim);
     gettimeofday (&tv, NULL);
-    sprintf (tim, ".%03d", (int)tv.tv_usec/1000);
+    snprintf (tim, 4, ".%03d", (int)tv.tv_usec/1000);
     s += tim;
 }
 
