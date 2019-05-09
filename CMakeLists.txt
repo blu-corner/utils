@@ -90,9 +90,13 @@ find_library(EVENT_LIB
 find_library(EVENT_PTHREAD_LIB
   NAMES event_pthreads
   HINTS "${CMAKE_INSTALL_PREFIX}/lib")
+find_path(EVENT_INCLUDE_DIR event2/event.h
+  PATHS "${CMAKE_INSTALL_PREFIX}/include")
 if (EVENT_LIB AND EVENT_PTHREAD_LIB)
   message(STATUS "event-found: " ${EVENT_LIB})
   message(STATUS "event-pthread-found: " ${EVENT_PTHREAD_LIB})
+  message(STATUS "event-headers-found: " ${EVENT_INCLUDE_DIR})
+  include_directories(${EVENT_INCLUDE_DIR})
 elseif (NOT event_FOUND)
   set(LIBEVENT_CMAKE ${SUBMODULE_ROOT_DIR}/ext/libevent CACHE PATH "Location of libevent-cmake" FORCE)
   message(STATUS "libevent-location: " ${LIBEVENT_CMAKE})
